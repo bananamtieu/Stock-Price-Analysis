@@ -144,3 +144,31 @@ print(results_df)
 # Evaluate the classifier
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy}")
+
+from sklearn.model_selection import GridSearchCV
+
+# Define the parameter grid
+param_grid = {
+    'n_estimators': [100, 200, 300],  # Number of trees in the forest
+    'max_depth': [None, 10, 20, 30],  # Maximum depth of the tree
+    'min_samples_split': [2, 5, 10],  # Minimum number of samples to split a node
+    'min_samples_leaf': [1, 2, 4],    # Minimum number of samples at each leaf node
+    'max_features': ['sqrt', 'log2', None],  # Number of features to consider at each split
+}
+
+# Initialize the RandomForestClassifier
+clf = RandomForestClassifier(random_state=42)
+
+# Initialize GridSearchCV
+grid_search = GridSearchCV(estimator=clf, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+
+# Fit the grid search
+grid_search.fit(X_train, y_train)
+
+# Get the best estimator
+best_rf = grid_search.best_estimator_
+
+# Evaluate the best model
+y_pred = best_rf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Best model accuracy: {accuracy}")
